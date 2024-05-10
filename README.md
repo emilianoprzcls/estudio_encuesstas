@@ -9,16 +9,16 @@ A continuación se detalla la estructura y el contenido de los archivos incluido
 1. **df**:
    - Contiene las bases de datos de todas las encuestas realizadas para este estudio, así como la base de datos con la información oficial sobre el padrón electoral de 2024.
 
-2. **df.ipynb**:
+2. `df.ipynb`:
    - Notebook de Jupyter que estandariza y genera las bases de datos en el formato requerido, almacenándolas en el directorio especificado anteriormente como 'df'.
 
-3. **juntos.R**:
+3. `juntos.R`:
    - Script en R que procesa las bases de datos generadas por `df.ipynb`, añadiendo variables relevantes como los rangos de edad del padrón electoral. Este archivo también prepara los datos para su posterior análisis mediante pruebas de hipótesis.
 
 4. **anova**:
    - Directorio que almacena las bases de datos homogeneizadas y preparadas en `juntos.R`, destinadas a la realización de gráficos y análisis estadístico dentro del estudio.
 
-5. **prueba_proporciones.R**:
+5. `prueba_proporciones.R`:
    - Script en R que implementa las pruebas de hipótesis chi-cuadrado (\(\chi^2\)) para evaluar diferencias estadísticamente significativas entre grupos.
 
 6. **plots**:
