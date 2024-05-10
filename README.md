@@ -1,2 +1,3 @@
-# estudio_encuesstas
-Este repositorio sirve como herramienta de transparencia para el estudio de las encuestas presidenciales 2024. Aquí se proporcionan las bases de datos y cálculos realizados, permitiendo una revisión exhaustiva y comprensible para todos los interesados.
+# Estudio Encuestas
+
+Este repositorio se ha creado como una herramienta de transparencia fundamental para el estudio de las encuestas relacionadas con las elecciones presidenciales de 2024. Aquí se proporciona acceso integral a las bases de datos utilizadas y a los cálculos realizados durante nuestro análisis. Nuestro compromiso es asegurar que cada fase del proceso sea completamente accesible y comprensible para todos los interesados. Este espacio está dedicado a fomentar una mayor comprensión y confianza en los métodos de investigación empleados, permitiendo así una revisión exhaustiva y crítica de todos los materiales pertinentes.
