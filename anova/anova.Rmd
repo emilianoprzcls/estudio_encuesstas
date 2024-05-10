@@ -1,0 +1,160 @@
+---
+title: "anova"
+author: "Emiliano Pérez Caullieres"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(readr)
+library(klaR)
+library(dplyr)
+library(repurrrsive)
+library(purrr)
+library(data.table)
+ANOVA_bloque <- function(DATA, FAlpha){
+  # Asegurar que la columna 'BLOQUE' sea eliminada correctamente
+  DATATRAT <- DATA[, !colnames(DATA) %in% "rango_edad", drop = FALSE]
+  
+  nBLOQUE <- nrow(DATA)
+  nTRAT <- ncol(DATATRAT)
+  valtrat <- list()
+  valbloc <- list()
+  values <- list()
+  
+  # Crear una lista con las sumas de cada tratamiento
+  for (k in 1:nTRAT){
+    valtrat[[paste0("sumtrat_", k)]] <- sum(DATATRAT[, k], na.rm = TRUE)
+  }
+  T <- sum(unlist(valtrat, use.names = FALSE))
+  TT <- (T^2) / (nBLOQUE * nTRAT)
+  
+  # Crear una lista con las sumas de cada bloque
+  # Corrección para asegurar que estamos sumando correctamente los bloques
+  for (k in 1:nBLOQUE){
+    valbloc[[paste0("sumbloque_", k)]] <- sum(DATA[k, -which(names(DATA) == "rango_edad")], na.rm = TRUE)
+  }
+  
+  # Crear una lista con todos los valores
+  for (i in 1:nTRAT){
+    values[[paste0("x_", i)]] <- DATATRAT[, i]
+  }
+  
+  # SSTR
+  sub_SSTR_B <- function(list){
+    sum((list^2) / nBLOQUE, na.rm = TRUE)
+  }
+  SSTR_B <- sum(unlist(lapply(valtrat, sub_SSTR_B))) - TT
+  
+  # SSB
+  sub_SSB <- function(list){
+    sum((list^2) / nTRAT, na.rm = TRUE)
+  }
+  SSB <- sum(unlist(lapply(valbloc, sub_SSB))) - TT
+  
+  # SSTOT
+  sub_SSTOT <- function(list){
+    sum((list^2), na.rm = TRUE)
+  }
+  SSTOT <- sum(unlist(lapply(values, sub_SSTOT))) - TT
+  
+  # Creación de la tabla
+  FUENTE <- c("TRAT.", "BLOQUES", "ERROR", "TOTAL")
+  DF <- c((nTRAT - 1), (nBLOQUE - 1), ((nTRAT - 1) * (nBLOQUE - 1)), ((nBLOQUE * nTRAT) - 1))
+  SS <- c(SSTR_B, SSB, (SSTOT - SSTR_B - SSB), SSTOT)
+  MSS <- c((SSTR_B / (nTRAT - 1)), (SSB / (nBLOQUE - 1)), ((SSTOT - SSTR_B - SSB) / ((nTRAT - 1) * (nBLOQUE - 1))), NA)
+  F <- c((MSS[1] / MSS[3]), (MSS[2] / MSS[3]), NA, NA)
+  
+  # Calcular el F crítico
+  Fcritico_trat <- qf(1 - FAlpha, nTRAT - 1, (nTRAT - 1) * (nBLOQUE - 1))
+  Fcritico_bloc <- qf(1 - FAlpha, nBLOQUE - 1, (nTRAT - 1) * (nBLOQUE - 1))
+  Fcritico <- c(Fcritico_trat, Fcritico_bloc, NA, NA)
+  
+  # Comparar F obtenido con F crítico
+  Comparacion <- c(F[1] > Fcritico_trat, F[2] > Fcritico_bloc, NA, NA)
+  
+  # Calcular p-value
+  p_val_trat <- 1 - pf(F[1], DF[1], DF[3])
+  p_val_bloc <- 1 - pf(F[2], DF[2], DF[3])
+  
+  # Crear vector de asteriscos
+  asteriscos <- c("", "", "", "")
+  if (p_val_trat <= 0.1) asteriscos[1] <- "*"
+  if (p_val_trat <= 0.05) asteriscos[1] <- "**"
+  if (p_val_trat <= 0.01) asteriscos[1] <- "***"
+  if (p_val_bloc <= 0.1) asteriscos[2] <- "*"
+  if (p_val_bloc <= 0.05) asteriscos[2] <- "**"
+  if (p_val_bloc <= 0.01) asteriscos[2] <- "***"
+  
+  # Añadir al data frame
+  TABLA <- cbind.data.frame(FUENTE, DF=round(DF,2), SS=round(SS,2), round(MSS,2), round(F,2), round(Fcritico,2), Comparacion, pvalue = c(p_val_trat, p_val_bloc, NA, NA), Asteriscos = asteriscos)
+  for (i in 1:ncol(TABLA)) {
+    if (is.numeric(TABLA[[i]])) {
+      TABLA[[i]] <- format(TABLA[[i]], scientific = FALSE)
+    }
+  }
+  knitr::kable(TABLA, caption = "ANOVA DE BLOQUES")
+}
+
+
+
+
+
+buendia_marquez_h <- read_csv("anova/buendia_marquez_h.csv")
+buendia_marquez_m <- read_csv("anova/buendia_marquez_m.csv")
+covarrubias_h <- read_csv("anova/covarrubias_h.csv")
+covarrubias_m <- read_csv("anova/covarrubias_m.csv")
+enkoll_h <- read_csv("anova/enkoll_h.csv")
+enkoll_m <- read_csv("anova/enkoll_m.csv")
+mitofsky_h <- read_csv("anova/mitofsky_h.csv")
+mitofsky_m <- read_csv("anova/mitofsky_m.csv")
+padron_h <- read_csv("anova/padron_h.csv")
+padron_m <- read_csv("anova/padron_m.csv")
+financiero_h <- read_csv("anova/financiero_h.csv")
+financiero_m <- read_csv("anova/financiero_m.csv")
+meba_h <- read_csv("anova/meba_h.csv")
+meba_m <- read_csv("anova/meba_m.csv")
+cipreso_h <- read_csv("anova/cipreso_h.csv")
+cipreso_m <- read_csv("anova/cipreso_m.csv")
+
+
+buendia_marquez_h <- left_join(buendia_marquez_h,padron_h, by="rango_edad")
+covarrubias_h <- left_join(covarrubias_h,padron_h, by="rango_edad")
+enkoll_h <- left_join(covarrubias_h,padron_h, by="rango_edad")
+mitofsky_h <- left_join(mitofsky_h,padron_h, by="rango_edad")
+financiero_h <- left_join(financiero_h,padron_h, by="rango_edad")
+meba_h <- left_join(meba_h,padron_h, by="rango_edad")
+cipreso_h <- left_join(cipreso_h,padron_h, by="rango_edad")
+
+buendia_marquez_m <- left_join(buendia_marquez_m, padron_m, by="rango_edad")
+covarrubias_m <- left_join(covarrubias_m, padron_m, by="rango_edad")
+enkoll_m <- left_join(enkoll_m, padron_m, by="rango_edad")
+mitofsky_m <- left_join(mitofsky_h, padron_m, by="rango_edad")
+financiero_m <- left_join(financiero_m,padron_h, by="rango_edad")
+meba_m <- left_join(meba_h,padron_m, by="rango_edad")
+cipreso_m <- left_join(cipreso_m,padron_h, by="rango_edad")
+```
+
+# Hombres
+
+```{r}
+ANOVA_bloque(buendia_marquez_h, 0.05)
+ANOVA_bloque(covarrubias_h, 0.05)
+ANOVA_bloque(enkoll_h, 0.05)
+ANOVA_bloque(mitofsky_h, 0.05)
+ANOVA_bloque(financiero_h, 0.05)
+ANOVA_bloque(meba_h, 0.05)
+ANOVA_bloque(cipreso_h, 0.05)
+```
+# Mujeres
+```{r}
+ANOVA_bloque(buendia_marquez_m, 0.05)
+ANOVA_bloque(covarrubias_m, 0.05)
+ANOVA_bloque(enkoll_m, 0.05)
+ANOVA_bloque(mitofsky_m, 0.05)
+ANOVA_bloque(financiero_m, 0.05)
+ANOVA_bloque(meba_m, 0.05)
+ANOVA_bloque(cipreso_m, 0.05)
+```
+
+
