@@ -104,4 +104,43 @@ ggplot(all_data, aes(x = rango_edad, y = homo_pon, fill = partido)) +
   geom_point(data=suma_padron_total, aes(x = rango_edad, y = total_sum), shape=17, size=2.5)
 
 
+ggplot(padron, aes(x = rango_edad, y = total, fill = N_estado)) +
+  geom_bar(stat = "identity", position = "stack") + 
+  coord_flip()  +
+  labs(title = " ",
+       x = "Rango de Edad",
+       y = "Población") +
+  theme_minimal() +
+  theme(legend.position = "bottom", 
+        text = element_text(family = "Times New Roman", size = 12), # Adjust the size here
+        axis.title.x = element_text(margin = margin(t = 15, b = 1), size = 14), # Adjust the size here
+        axis.title.y = element_text(margin = margin(r = 15, l = 1), size = 14), # Adjust the size here
+        axis.text.x = element_text(margin = margin(t = 5), size = 12), # Adjust the size here
+        axis.text.y = element_text(margin = margin(r = 5), size = 12), # Adjust the size here
+        plot.title = element_text(margin = margin(b = 10), size = 20),
+        strip.text = element_text(size = 20)) + # Adjust the size here
+  geom_hline(yintercept = 0, color = "black", size = 1) +
+  scale_fill_manual(values = moma.colors("Warhol", 32), guide = guide_legend(title = " ")) +
+  annotate("text", x = 0, y = 4, label = "Mujeres", vjust = -0.5, hjust = -2, size = 5, family = "Times New Roman") + 
+  annotate("text", x = 0, y = 0, label = "Hombres", vjust = -0.5, hjust = 2, size = 5, family = "Times New Roman")+
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = -8000000, ymax = 0, alpha = 0.3, fill = "gray")+
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = 0, ymax = 8000000, alpha = 0.3, fill = "#62393D")
+
+ggplot(padron, aes(x = rango_edad, y = abs(total), fill = N_estado)) +
+  geom_bar(stat = "identity", position = "stack") + 
+  coord_flip()  +
+  labs(title = " ",
+       x = "Rango de Edad",
+       y = "Población") +
+  theme_minimal() +
+  theme(legend.position = "bottom", 
+        text = element_text(family = "Times New Roman", size = 12), # Adjust the size here
+        axis.title.x = element_text(margin = margin(t = 15, b = 1), size = 14), # Adjust the size here
+        axis.title.y = element_text(margin = margin(r = 15, l = 1), size = 14), # Adjust the size here
+        axis.text.x = element_text(margin = margin(t = 5), size = 12), # Adjust the size here
+        axis.text.y = element_text(margin = margin(r = 5), size = 12), # Adjust the size here
+        plot.title = element_text(margin = margin(b = 10), size = 20),
+        strip.text = element_text(size = 20)) + # Adjust the size here
+  geom_hline(yintercept = 0, color = "black", size = 1) +
+  scale_fill_manual(values = moma.colors("Warhol", 32), guide = guide_legend(title = " "))
 
